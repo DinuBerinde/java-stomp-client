@@ -199,7 +199,7 @@ public final class StompClient implements AutoCloseable {
                     .connect();
         }
         catch (Exception e) {
-           LOGGER.log(Level.SEVERE, "[Stomp client] got an exception", e);
+            LOGGER.log(Level.SEVERE, "[Stomp client] got an exception", e);
         }
 
         awaitClientConnection();
@@ -209,7 +209,7 @@ public final class StompClient implements AutoCloseable {
      * Emits that the client is connected.
      */
     private void emitClientConnected() {
-        synchronized(CONNECTION_LOCK) {
+        synchronized (CONNECTION_LOCK) {
             CONNECTION_LOCK.notify();
         }
     }
@@ -218,7 +218,7 @@ public final class StompClient implements AutoCloseable {
      * Awaits if necessary until the websocket client is connected.
      */
     private void awaitClientConnection() {
-        synchronized(CONNECTION_LOCK) {
+        synchronized (CONNECTION_LOCK) {
             if (!isClientConnected)
                 try {
                     CONNECTION_LOCK.wait();
@@ -243,47 +243,47 @@ public final class StompClient implements AutoCloseable {
             ResultHandler<?> resultHandler = subscription.getResultHandler();
 
             if (resultHandler.getResultTypeClass() == Void.class || result == null || result.equals("null"))
-                resultHandler.deliverError(new ErrorModel("Received a null result", InternalFailureException.class.getName()));
+                resultHandler.deliverNothing();
             else
                 resultHandler.deliverResult(result);
         }
     }
 
     /**
-     * It sends a payload to the "user" topic by performing an initial subscription
-     * and waits for a result. The subscription is recycled.
+     * It sends a payload to the standard "user" topic destination by performing an initial subscription
+     * and then it waits for the result. The subscription is recycled.
      *
-     * @param <T>        the type of the expected result
-     * @param topic      the topic
-     * @param resultType the result type
+     * @param <T>              the type of the expected result
+     * @param topicDestination the topic destination
+     * @param resultType       the result type
      */
-    public <T> T send(String topic, Class<T> resultType) {
-        return send(topic, resultType);
+    public <T> T send(String topicDestination, Class<T> resultType) {
+        return send(topicDestination, resultType);
     }
 
     /**
-     * It sends a payload to the "user" topic by performing an initial subscription
-     * and waits for a result. The subscription is recycled.
+     * It sends a message payload to the standard "user" topic destination by performing an initial subscription
+     * and then it waits for the result. The subscription is recycled.
      *
-     * @param <T>        the type of the expected result
-     * @param <P>        the type of the payload
-     * @param topic      the topic
-     * @param resultType the result type
-     * @param payload    the payload
+     * @param <T>              the type of the expected result
+     * @param <P>              the type of the payload
+     * @param topicDestination the topic destination
+     * @param resultType       the result type
+     * @param payload          the payload
      */
     @SuppressWarnings("unchecked")
-    public <T, P> T send(String topic, Class<T> resultType, P payload) throws InterruptedException, NetworkExceptionResponse {
-        LOGGER.info("[Stomp client] Subscribing to  " + topic);
+    public <T, P> T send(String topicDestination, Class<T> resultType, P payload) throws InterruptedException, NetworkExceptionResponse {
+        LOGGER.info("[Stomp client] Subscribing to  " + topicDestination);
 
-        String resultTopic = "/user/" + clientKey + topic;
+        String resultTopic = "/user/" + clientKey + topicDestination;
         Object result;
 
-        BlockingQueue<Object> queue = queues.computeIfAbsent(topic, _key -> new LinkedBlockingQueue<>(1));
+        BlockingQueue<Object> queue = queues.computeIfAbsent(topicDestination, _key -> new LinkedBlockingQueue<>(1));
         synchronized (queue) {
             subscribe(resultTopic, resultType, queue);
 
-            LOGGER.info("[Stomp client] Sending payload to  " + topic);
-            webSocket.sendText(StompMessageHelper.buildSendMessage(topic, payload));
+            LOGGER.info("[Stomp client] Sending payload to topic destination " + topicDestination);
+            webSocket.sendText(StompMessageHelper.buildSendMessage(topicDestination, payload));
             result = queue.take();
         }
 
@@ -342,7 +342,7 @@ public final class StompClient implements AutoCloseable {
      * @param payload the payload
      */
     public <T> void sendToTopic(String topic, T payload) {
-        LOGGER.info("[Stomp client] Sending to " + topic);
+        LOGGER.info("[Stomp client] Sending to topic " + topic);
         webSocket.sendText(StompMessageHelper.buildSendMessage(topic, payload));
     }
 
@@ -450,7 +450,7 @@ public final class StompClient implements AutoCloseable {
         internalSubscriptions.clear();
 
         // indicates a normal closure
-        webSocket.disconnect(1000, null);
+        webSocket.disconnect(1000);
     }
 
     /**

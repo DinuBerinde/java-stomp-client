@@ -1,5 +1,8 @@
 package com.dinuberinde.stomp.client;
 
+/**
+ * The model of an exception.
+ */
 public class ErrorModel {
     /**
      * The message of the exception.
