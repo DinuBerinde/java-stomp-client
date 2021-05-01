@@ -3,6 +3,7 @@ package com.dinuberinde.stomp.client.internal;
 import com.dinuberinde.stomp.client.exceptions.InternalFailureException;
 import com.dinuberinde.stomp.client.ErrorModel;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Abstract class to handle the result published by a topic.
@@ -13,7 +14,7 @@ public abstract class ResultHandler<T> {
     private final Class<T> resultTypeClass;
 
     protected ResultHandler(Class<T> resultTypeClass) {
-        this.gson = new Gson();
+        this.gson = new GsonBuilder().disableHtmlEscaping().serializeNulls().create();
         this.resultTypeClass = resultTypeClass;
     }
 
