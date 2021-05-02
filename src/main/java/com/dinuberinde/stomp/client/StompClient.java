@@ -298,6 +298,7 @@ public final class StompClient implements AutoCloseable {
 
     /**
      * Subscribes to a topic providing a {@link BiConsumer} handler to handle the result published by the topic.
+     * The subscription is recycled and the method awaits for the subscription to complete.
      *
      * @param topic      the topic destination
      * @param resultType the result type

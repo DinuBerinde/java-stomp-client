@@ -20,6 +20,7 @@ public class StompClientTest {
             stompClient.connect(() -> {
                         CompletableFuture.runAsync(() -> {
 
+                            // subscribe to topic
                             stompClient.subscribeToTopic("/topic/events", Event.class, (result, error) -> {
 
                                 if (error != null) {
@@ -33,6 +34,7 @@ public class StompClientTest {
                                 }
                             });
 
+                            // send event
                             stompClient.sendToTopic("/topic/events", new Event("testing stomp client"));
                         });
                     },
@@ -53,6 +55,8 @@ public class StompClientTest {
                         CompletableFuture.runAsync(() -> {
 
                             try {
+
+                                // subscribe and send payload
                                 EchoModel result = stompClient.send("/echo/message", EchoModel.class, new EchoModel("hello world"));
                                 EchoModel result2 = stompClient.send("/echo/message", EchoModel.class, new EchoModel("hello world class"));
 
@@ -154,7 +158,11 @@ public class StompClientTest {
         public void call() {
             CompletableFuture.runAsync(() -> {
                 try {
+
+                    // subscribe and send payload
                     EchoModel result = asyncStompClient.send("/echo/message", EchoModel.class, echoModel);
+
+                    // fill the map results
                     results.put(result.message, true);
                 }
                 catch (InterruptedException | NetworkExceptionResponse e) {
