@@ -15,7 +15,7 @@ StompClient stompClient = new StompClient(endpoint);
 // connect to the endpoint
 stompClient.connect();
 
-// subscribe to a topic an suppose to receive a result of type Event.class
+// subscribe to a topic an suppose to receive a result of type Event
 stompClient.subscribeToTopic("/topic/events", Event.class, (result, error) -> {
 
         if (error != null) {
@@ -43,7 +43,8 @@ stompClient.connect();
 
 // send a message and wait for the result from the destination topic 
 EchoModel result = stompClient.send("/echo/message", EchoModel.class, new EchoModel("hello world"));
-
+System.out.println("Got result: " + result.getMessage());
+        
 // close the stomp client
 stompClient.close();
 ```
