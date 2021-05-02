@@ -4,6 +4,10 @@
 A synchronous and asynchronous thread safe webSocket client which implements 
 the STOMP protocol https://stomp.github.io/index.html. 
 
+## License
+
+Apache License, Version 2.0
+
 ## Usage
 
 #### Asynchronous
@@ -52,3 +56,6 @@ stompClient.close();
 ## Tests
 In order to execute the tests, be sure to download and launch locally 
 the webSocket server implementation https://github.com/DinuBerinde/SpringBootStompWebSocketsDemo
+
+## Author
+Dinu Berinde <dinu2193@gmail.com>
